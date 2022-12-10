@@ -2,11 +2,17 @@ from abc import ABC, abstractmethod
 import networkx as nx
 from enum import IntEnum
 import svgwrite as draw
+import random as rnd
+import stack
 
 class Maze(ABC):
 
     @abstractmethod
     def __init__(self):
+        pass
+
+    @abstractmethod
+    def random_cell (self):
         pass
 
 class Neighbour(IntEnum):
@@ -26,8 +32,12 @@ class Rectangular_Maze(Maze):
             self.row = row
             self.col = col
             self.pos = (row, col)
+            self.visited = False
 
         def connect(self, o_cell):
+            self.visited = True
+            o_cell.visited = True
+
             if self.row == o_cell.row and self.col + 1 == o_cell.col:
                 self.neighbours[Neighbour.East] = True
                 o_cell.neighbours[Neighbour.West] = True
@@ -41,8 +51,8 @@ class Rectangular_Maze(Maze):
                 o_cell.neighbours[Neighbour.North] = True
 
             if self.row - 1 == o_cell.row and self.col == o_cell.col:
-                self.neighbours[Neighbour.South] = True
-                o_cell.neighbours[Neighbour.North] = True
+                self.neighbours[Neighbour.North] = True
+                o_cell.neighbours[Neighbour.South] = True
 
         def __str__(self):
             return "{0} {1}".format(self.pos, self.neighbours)
@@ -51,11 +61,41 @@ class Rectangular_Maze(Maze):
     def __init__(self, width, height):
         self.grid = [[self.Maze_Element(r, c) for c in range(0, width)] for r in range(0, height)]
         self.grid_graph = nx.Graph()
+        self.width = width
+        self.height = height
+
         for row in self.grid:
             self.grid_graph.add_nodes_from (row)
 
-    #def add_passage (self, cell1, cell2):
-    #    self.grid_graph.add_edge(cell1, cell2)
+    def random_cell(self):
+        i = rnd.randint(0, self.height-1)
+        j = rnd.randint(0, self.width-1)
+
+        return self.grid[i][j]
+
+    def neighbours(self, of_cell, only_unvisited=True):
+        neighbour_list = []
+        i = of_cell.row
+        j = of_cell.col
+
+        print ('i {}, i+1 {}, j {}, j+1 {}'.format(i, i+1, j, j+1))
+        if i > 0:
+            neighbour_list.append(self.grid[i-1][j])
+        if i + 1 < self.height:
+            neighbour_list.append(self.grid[i+1][j])
+        if j > 0:
+            neighbour_list.append(self.grid[i][j-1])
+        if j + 1 < self.width:
+            neighbour_list.append(self.grid[i][j+1])
+
+        if only_unvisited:
+            neighbour_list = [e for e in neighbour_list if e.visited == False]
+
+        print ("Neighbours of ", of_cell)
+        for e in neighbour_list:
+            print (e)
+
+        return neighbour_list
 
     def add_passage (self, cell, length, dir):
         """
@@ -87,6 +127,38 @@ class Maze_Gen_Algorithm(ABC):
     def __init__(self):
         pass
 
+    @abstractmethod
+    def __call__(self):
+        pass
+
+class Recursive_Backtracker (Maze_Gen_Algorithm):
+
+    def __init__(self):
+        pass
+
+    def __call__(self, maze):
+        n_rows = len(maze.grid)
+        n_cols = len(maze.grid[0])
+
+        s = stack.Stack()
+        e = maze.random_cell()
+        #e = maze.grid[0][0]
+        print (e)
+        s.push(e)
+        while not s.is_empty():
+            current = s.top()
+            n = maze.neighbours(of_cell=current, only_unvisited=True)
+            #print ('N', n)
+            if len(n) == 0:
+                s.pop()
+            else:
+                e = rnd.sample(n, 1)[0]
+                print ('e', e)
+                current.connect(e)
+                s.push(e)
+                n.remove(e)
+
+
 class Maze_Printer:
 
     def __init__(self, cell_size = 10, filename="maze.svg"):
@@ -95,57 +167,71 @@ class Maze_Printer:
 
     def print(self, maze):
 
+        def add_to_paths(paths, s, e):
+            #print (paths, s, e)
+            for p in paths:
+                if p[-1] == s:
+                    p.append(e)
+                    return
+            paths.append([s, e])
+
+        def make_path_string (path):
+            path_cmds = []
+
+            cmd = "M {} {}".format(path[0][0], path[0][1])
+            path_cmds.append(cmd)
+            for p in path[1:]:
+                cmd = "L {} {}".format(p[0], p[1])
+                path_cmds.append(cmd)
+            s = ''.join(path_cmds)
+            return (s)
+
         rows = len(maze.grid)
         cols = len(maze.grid[0])
-        d = draw.Drawing(self.filename)
+        paths = []
         for i, row in enumerate(maze.grid):
             for j, el in enumerate(row):
                 if not el.neighbours[Neighbour.West]:
                     #print(el)
                     s = (j * self.cell_size, i * self.cell_size)
                     e = (j * self.cell_size, (i + 1) * self.cell_size)
-                    d.add (draw.shapes.Line(s,e, style="stroke:#000000"))
+                    #d.add (draw.shapes.Line(s,e, style="stroke:#000000"))
+                    add_to_paths(paths, s, e)
                 if not el.neighbours[Neighbour.North]:
                     s = (j * self.cell_size, i * self.cell_size)
                     e = ((j + 1) * self.cell_size, i * self.cell_size)
-                    d.add (draw.shapes.Line(s,e, style="stroke:#000000"))
+                    #d.add (draw.shapes.Line(s,e, style="stroke:#000000"))
+                    add_to_paths(paths, s, e)
+                    #print('North', paths, s, e)
                 if j == cols - 1:
                     s = ((j + 1) * self.cell_size, i * self.cell_size)
                     e = ((j + 1) * self.cell_size, (i + 1) * self.cell_size)
-                    d.add (draw.shapes.Line(s,e, style="stroke:#000000"))
+                    #d.add (draw.shapes.Line(s,e, style="stroke:#000000"))
+                    add_to_paths(paths, s, e)
                 if i == rows - 1:
                     s = (j * self.cell_size, (i + 1) * self.cell_size)
                     e = ((j + 1) * self.cell_size, (i + 1) * self.cell_size)
-                    d.add(draw.shapes.Line(s, e, style="stroke:#000000"))
+                    #d.add(draw.shapes.Line(s, e, style="stroke:#000000"))
+                    add_to_paths(paths, s, e)
 
+        d = draw.Drawing(self.filename)
+        g = draw.container.Group()
+        for p in paths:
+            ps = make_path_string(p)
+            svg_path = draw.path.Path (ps, style="stroke:#000000;fill:none")
+            d.add(svg_path)
+
+        #print (paths)
+        d.add(g)
         d.save(pretty=True)
 
 
 if __name__ == '__main__':
-    m = Rectangular_Maze(5,5)
-    #print (r.grid)
-    import sys
+    m = Rectangular_Maze(7,7)
 
-    m.add_passage((0,0), 5, 'H')
-    #for j, el in enumerate(m.grid[0]):
-    #    print(el)
-
-    m.add_passage((1,0), 3, 'H')
-    m.add_passage((2,3), 2, 'H')
-    m.add_passage((3,0), 5, 'H')
-    m.add_passage((4,0), 2, 'H')
-    m.add_passage((4,2), 2, 'H')
-    #
-    m.add_passage((1,0), 2, 'V')
-    m.add_passage((0,1), 4, 'V')
-    #for j, el in enumerate(m.grid[0]):
-    #    print(el)
-    m.add_passage((1,3), 2, 'V')
-    m.add_passage((0,4), 3, 'V')
-    m.add_passage((2,2), 2, 'V')
-    m.add_passage((3,0), 2, 'V')
-    m.add_passage((3,3), 2, 'V')
-    m.add_passage((3,4), 2, 'V')
+    m = Rectangular_Maze(10,7)
+    a = Recursive_Backtracker()
+    a(m)
 
     p = Maze_Printer()
     p.print(m)
