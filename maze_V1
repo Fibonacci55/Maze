@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" baseProfile="full" height="100%" version="1.1" width="100%">
+  <defs/>
+  <line x1="0mm" x2="0mm" y1="0mm" y2="10mm"/>
+  <line x1="0mm" x2="0mm" y1="10mm" y2="20mm"/>
+  <line x1="0mm" x2="0mm" y1="20mm" y2="30mm"/>
+  <line x1="0mm" x2="0mm" y1="30mm" y2="40mm"/>
+  <line x1="0mm" x2="0mm" y1="40mm" y2="50mm"/>
+  <line x1="10mm" x2="10mm" y1="0mm" y2="10mm"/>
+  <line x1="10mm" x2="10mm" y1="20mm" y2="30mm"/>
+  <line x1="10mm" x2="10mm" y1="30mm" y2="40mm"/>
+  <line x1="20mm" x2="20mm" y1="20mm" y2="30mm"/>
+  <line x1="20mm" x2="20mm" y1="30mm" y2="40mm"/>
+  <line x1="30mm" x2="30mm" y1="0mm" y2="10mm"/>
+  <line x1="30mm" x2="30mm" y1="30mm" y2="40mm"/>
+  <line x1="30mm" x2="30mm" y1="40mm" y2="50mm"/>
+  <line x1="40mm" x2="40mm" y1="10mm" y2="20mm"/>
+  <line x1="40mm" x2="40mm" y1="20mm" y2="30mm"/>
+</svg>
