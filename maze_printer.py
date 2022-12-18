@@ -19,11 +19,18 @@ class Rectangular_Maze_Printer:
     def __init__(self, cell_size = 10, filename="maze.svg"):
         self.cell_size = cell_size
         self.filename = filename
+        self.used_segments = set()
 
     def print(self, maze):
 
         def add_to_paths(paths, s, e):
             #print (paths, s, e)
+            #if (s, e) in self.used_segments or (e, s) in self.used_segments:
+            #    print ('already in')
+            #    return
+            #else:
+            #    self.used_segments.add((s, e))
+            #print (self.used_segments)
             for p in paths:
                 if p[-1] == s:
                     if p[-2][0] == e[0] or p[-2][1] == e[1]:
@@ -70,29 +77,26 @@ class Rectangular_Maze_Printer:
             for j, el in enumerate(row):
                 if not el.active:
                     el.neighbours = [True, True, True, True]
-                #    pass
+                    pass
                 if not el.neighbours[Neighbour.West]:
                     #print(el)
                     s = (j * self.cell_size, i * self.cell_size)
                     e = (j * self.cell_size, (i + 1) * self.cell_size)
-                    #d.add (draw.shapes.Line(s,e, style="stroke:#000000"))
                     add_to_paths(paths, s, e)
                 if not el.neighbours[Neighbour.North]:
                     s = (j * self.cell_size, i * self.cell_size)
                     e = ((j + 1) * self.cell_size, i * self.cell_size)
-                    #d.add (draw.shapes.Line(s,e, style="stroke:#000000"))
                     add_to_paths(paths, s, e)
                     #print('North', paths, s, e)
-                if j == cols - 1:
+                if not el.neighbours[Neighbour.East]: #j == cols - 1:
                     s = ((j + 1) * self.cell_size, i * self.cell_size)
                     e = ((j + 1) * self.cell_size, (i + 1) * self.cell_size)
-                    #d.add (draw.shapes.Line(s,e, style="stroke:#000000"))
                     add_to_paths(paths, s, e)
-                if i == rows - 1:
+                if not el.neighbours[Neighbour.South]: #i == rows - 1:
                     s = (j * self.cell_size, (i + 1) * self.cell_size)
                     e = ((j + 1) * self.cell_size, (i + 1) * self.cell_size)
-                    #d.add(draw.shapes.Line(s, e, style="stroke:#000000"))
                     add_to_paths(paths, s, e)
+                    #print (s, e)
 
         d = draw.Drawing(self.filename)
         g = draw.container.Group()

@@ -10,6 +10,7 @@ from maze_printer import Rectangular_Maze_Printer
 
 if __name__ == '__main__':
 
+    mask = "D:\\Projects\\Flavio\\fla_quadrat_low.png"
     mask = "D:\\Projects\\Flavio\\fla_quadrat.png"
     #m = Rectangular_Maze(300,300)
     m = Rectangular_Maze.masked(mask)
