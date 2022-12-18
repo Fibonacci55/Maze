@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 import networkx as nx
 from enum import IntEnum
 import random as rnd
+import wand.image as image
+from wand import color
 
 class Maze(ABC):
 
@@ -13,9 +15,9 @@ class Maze(ABC):
     def random_cell(self):
         pass
 
-    @abstractmethod
-    def connect(self, o_cell):
-        pass
+    #@abstractmethod
+    #def connect(self, o_cell):
+    #    pass
 
     @abstractmethod
     def neighbours(self, of_cell, only_unvisited=True):
@@ -40,6 +42,9 @@ class Rectangular_Maze(Maze):
             self.col = col
             self.pos = (row, col)
             self.visited = False
+            self.active = True
+
+
 
         def connect(self, o_cell):
             self.visited = True
@@ -74,6 +79,20 @@ class Rectangular_Maze(Maze):
         for row in self.grid:
             self.grid_graph.add_nodes_from (row)
 
+    @classmethod
+    def masked(cls, mask_file):
+
+        white = color.Color('#fff')
+        whites = 0
+        with image.Image(filename=mask_file) as img:
+            m = cls(img.width, img.height)
+            for i in range(0, img.height):
+                for j in range(0, img.width):
+                    if img[i][j] == white:
+                        m.grid[i][j].active = False
+                        whites += 1
+            print ('Whites', whites)
+            return m
     def random_cell(self):
         i = rnd.randint(0, self.height-1)
         j = rnd.randint(0, self.width-1)
@@ -87,13 +106,17 @@ class Rectangular_Maze(Maze):
 
         #print ('i {}, i+1 {}, j {}, j+1 {}'.format(i, i+1, j, j+1))
         if i > 0:
-            neighbour_list.append(self.grid[i-1][j])
+            if self.grid[i-1][j].active:
+                neighbour_list.append(self.grid[i-1][j])
         if i + 1 < self.height:
-            neighbour_list.append(self.grid[i+1][j])
+            if self.grid[i+1][j].active:
+                neighbour_list.append(self.grid[i+1][j])
         if j > 0:
-            neighbour_list.append(self.grid[i][j-1])
+            if self.grid[i][j-1].active:
+                neighbour_list.append(self.grid[i][j-1])
         if j + 1 < self.width:
-            neighbour_list.append(self.grid[i][j+1])
+            if self.grid[i][j+1].active:
+                neighbour_list.append(self.grid[i][j+1])
 
         if only_unvisited:
             neighbour_list = [e for e in neighbour_list if e.visited == False]
@@ -105,35 +128,10 @@ class Rectangular_Maze(Maze):
 
         return neighbour_list
 
-    def add_passage(self, cell, length, dir):
-        """
-
-        :param cell:
-        :param length:
-        :param dir:
-        :return:
-        """
-        s = cell
-        for i in range(1, length):
-            if dir == 'H':
-                n = (s[0], s[1] + 1)
-            elif dir == 'V':
-                n = (s[0] + 1, s[1])
-            #print (s, n)
-            grid_cell1 = self.grid[s[0]][s[1]]
-            grid_cell2 = self.grid[n[0]][n[1]]
-            self.grid_graph.add_edge(grid_cell1,grid_cell2)
-            grid_cell1.connect(grid_cell2)
-            s = n
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
+
 
     m = Rectangular_Maze(300,300)
     #m = Rectangular_Maze(2,2)

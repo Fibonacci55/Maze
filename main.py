@@ -4,13 +4,18 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Strg+F8 to toggle the breakpoint.
+from maze import Rectangular_Maze
+from maze_gen_algorithms import Recursive_Backtracker
+from maze_printer import Rectangular_Maze_Printer
 
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    mask = "D:\\Projects\\Flavio\\fla_quadrat.png"
+    #m = Rectangular_Maze(300,300)
+    m = Rectangular_Maze.masked(mask)
+    #m = Rectangular_Maze(2,2)
+    a = Recursive_Backtracker()
+    a(m)
+
+    p = Rectangular_Maze_Printer()
+    p.print(m)

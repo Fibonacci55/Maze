@@ -1,6 +1,7 @@
 
 from abc import ABC, abstractmethod
 import svgwrite as draw
+from maze import Neighbour
 
 class Maze_Printer(ABC):
 
@@ -67,6 +68,9 @@ class Rectangular_Maze_Printer:
         paths = []
         for i, row in enumerate(maze.grid):
             for j, el in enumerate(row):
+                if not el.active:
+                    el.neighbours = [True, True, True, True]
+                #    pass
                 if not el.neighbours[Neighbour.West]:
                     #print(el)
                     s = (j * self.cell_size, i * self.cell_size)
