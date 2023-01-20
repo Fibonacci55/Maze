@@ -4,6 +4,12 @@ from enum import IntEnum
 import random as rnd
 import wand.image as image
 from wand import color
+import json
+import pickle
+
+from maze_gen_algorithms import Recursive_Backtracker
+#from maze_printer import Maze_Printer
+
 
 class Maze(ABC):
 
@@ -44,7 +50,16 @@ class Rectangular_Maze(Maze):
             self.visited = False
             self.active = True
 
+        def __repr__(self):
+            return '{} / {}'.format(self.row, self.col)
 
+        def __lt__(self, other):
+            if self.row < other.row:
+                return True
+            if self.row == other.row:
+                if self.col < other.col:
+                    return True
+            return False
 
         def connect(self, o_cell):
             self.visited = True
@@ -76,8 +91,8 @@ class Rectangular_Maze(Maze):
         self.width = width
         self.height = height
 
-        for row in self.grid:
-            self.grid_graph.add_nodes_from (row)
+        #for row in self.grid:
+        #    self.grid_graph.add_nodes_from (row)
 
     @classmethod
     def masked(cls, mask_file):
@@ -129,6 +144,26 @@ class Rectangular_Maze(Maze):
         return neighbour_list
 
 
+    def make_graph(self):
+
+        for i in range(0, self.height):
+            for j in range(0, self.width):
+                if not self.grid[i][j].active:
+                    continue
+                if self.grid[i][j].neighbours[Neighbour.South] :
+                   self.grid_graph.add_edge((i, j), (i+1, j))
+                if self.grid[i][j].neighbours[Neighbour.East] :
+                    self.grid_graph.add_edge((i, j), (i, j+1))
+
+    @classmethod
+    def from_file(cls, filename):
+        with open(filename, 'rb') as inf:
+            return pickle.load (inf)
+
+    def to_file(self, filenname):
+        with open(filenname, 'wb') as outf:
+            pickle.dump(self, outf)
+
 
 if __name__ == '__main__':
 
@@ -138,13 +173,6 @@ if __name__ == '__main__':
     a = Recursive_Backtracker()
     a(m)
 
-    p = Maze_Printer()
-    p.print(m)
-
-    for i, row in enumerate(m.grid):
-        for j, el in enumerate(row):
-            #print (el)
-            pass
 
     #print (m.grid)
     #nx.write_adjlist(m.grid_graph, "adj_list.txt")
