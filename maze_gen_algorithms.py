@@ -5,6 +5,7 @@ import stack
 import random as rnd
 
 
+
 class Maze_Gen_Algorithm(ABC):
 
     @abstractmethod

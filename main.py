@@ -61,10 +61,14 @@ def make_a_path (point_list):
     p = l[0]
     print ('p', p)
     s = tuple((int(p.split(',')[0]), int(p.split(',')[1])))
+    print ("==========")
     for p in l[1:]:
         e = tuple((int(p.split(',')[0]), int(p.split(',')[1])))
         print(s, e)
-        pl += nx.dijkstra_path(m.grid_graph, s, e)
+        rl = nx.dijkstra_path(m.grid_graph, s, e)
+        print ('\t', rl)
+        #pl += nx.dijkstra_path(m.grid_graph, s, e)
+        pl += rl
         s = e
 
     print(pl)

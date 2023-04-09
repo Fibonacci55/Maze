@@ -76,7 +76,7 @@ class Rectangular_Maze_Printer:
                 if el.active and j % 2 == 0 and i % 2 == 0:
                     #t = draw.text.Text(text='({0} {1})'.format(i,j),
                     #                   insert=(j*self.cell_size, i*self.cell_size),
-                    #                   font_size='7px')
+                    #                   font_size='6px')
                     #self.g.add(t)
                     pass
 
