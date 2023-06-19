@@ -28,12 +28,12 @@ class Recursive_Backtracker (Maze_Gen_Algorithm):
         s = stack.Stack()
         e = maze.random_cell()
         #e = maze.grid[0][0]
-        #print (e)
+        print (e)
         s.push(e)
         while not s.is_empty():
             current = s.top()
             n = maze.neighbours(of_cell=current, only_unvisited=True)
-            #print ('N', n)
+            print ('N', n)
             if len(n) == 0:
                 s.pop()
             else:

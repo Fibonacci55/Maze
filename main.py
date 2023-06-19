@@ -4,9 +4,9 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 
-from maze import Rectangular_Maze
+from rectangularmaze import RectangularMaze
 from maze_gen_algorithms import Recursive_Backtracker
-from maze_printer import Rectangular_Maze_Printer
+from mazeprinter import RectangularMazePrinter
 import argparse
 import networkx as nx
 
@@ -48,31 +48,32 @@ def get_edge_points (of_list):
     return (l_min, t_min, r_max, b_max)
 
 def make_a_path (point_list):
-    pass
+#    pass
 
+#    l = args.path.split(" ")
+#    pl = []
+#    # print ("P", p)
+#    # print ("int(p[0].split(',')[0])", int(p[0].split(',')[0]))
+#    # print ("int(p[0].split(',')[1])", int(p[0].split(',')[1]))
+#    # print ("p[0].split(',')", p[0].split(','))
+#    # print ('int(p[0].split(',')[0])', int(p[0].split(',')[0]))
+#    p = l[0]
+#    print ('p', p)
+#    s = tuple((int(p.split(',')[0]), int(p.split(',')[1])))
+#    print ("==========")
+#    for p in l[1:]:
+#        e = tuple((int(p.split(',')[0]), int(p.split(',')[1])))
+#        print(s, e)
+#        rl = nx.dijkstra_path(m.grid_graph, s, e)
+#       print ('\t', rl)
+#        #pl += nx.dijkstra_path(m.grid_graph, s, e)
+#        pl += rl
+#        s = e
 
-    l = args.path.split(" ")
-    pl = []
-    # print ("P", p)
-    # print ("int(p[0].split(',')[0])", int(p[0].split(',')[0]))
-    # print ("int(p[0].split(',')[1])", int(p[0].split(',')[1]))
-    # print ("p[0].split(',')", p[0].split(','))
-    # print ('int(p[0].split(',')[0])', int(p[0].split(',')[0]))
-    p = l[0]
-    print ('p', p)
-    s = tuple((int(p.split(',')[0]), int(p.split(',')[1])))
-    print ("==========")
-    for p in l[1:]:
-        e = tuple((int(p.split(',')[0]), int(p.split(',')[1])))
-        print(s, e)
-        rl = nx.dijkstra_path(m.grid_graph, s, e)
-        print ('\t', rl)
-        #pl += nx.dijkstra_path(m.grid_graph, s, e)
-        pl += rl
-        s = e
-
-    print(pl)
-    p = Rectangular_Maze_Printer(cell_size=20, filename=args.svg_file)
+    #print(pl)
+    p = RectangularMazePrinter(cell_size=20, filename=args.svg_file)
+    pl = nx.dag_longest_path(m.grid_graph)
+    print (pl)
     p.print(m)
     p.add_path(pl)
     p.save()
@@ -113,15 +114,15 @@ if __name__ == '__main__':
 
     #mask = "D:\\Projects\\Flavio\\fla_quadrat_low.png"
     #mask = "D:\\Projects\\Flavio\\fla_quadrat.png"
-    #m = Rectangular_Maze(300,300)
-    #m = Rectangular_Maze.masked(mask)
-    #m = Rectangular_Maze(2,2)
+    #m = RectangularMaze(300,300)
+    #m = RectangularMaze.masked(mask)
+    #m = RectangularMaze(2,2)
     #a = Recursive_Backtracker()
     #a(m)
     #m.to_file('maze_1.txt')
 
-    #m = Rectangular_Maze.from_file('saved_maze.txt')
-    #p = Rectangular_Maze_Printer()
+    #m = RectangularMaze.from_file('saved_maze.txt')
+    #p = RectangularMazePrinter()
     #p.print(m, path_way=[(10, 12), (129, 100)])
 
 
@@ -136,9 +137,13 @@ if __name__ == '__main__':
     #-m "D:\\Projects\\Flavio\\fla_quadrat.png" -p "maze.svg" -s "save_maze.txt"
     #-r "save_maze.txt"
     """-m
-    "D:\Projects\Flavio\fla_quadrat_35.png" - s
-    fla_quadrat_35.sav - p
+    "D:\\Projects\\Flavio\\fla_quadrat_35.png" -s
+    fla_quadrat_35.sav -p
     fla_quadrat_35.svg"""
+
+    """
+    -r fla_quadrat_350.sav -p fla_quadrat_350.svg"
+    """
     parser = create_arg_parser()
     args = parser.parse_args()
 
@@ -146,12 +151,12 @@ if __name__ == '__main__':
         if args.dimension:
             w=int(args.dimension.split(',')[0])
             h=int(args.dimension.split(',')[1])
-            m = Rectangular_Maze(w,h)
+            m = RectangularMaze(w,h)
             a = Recursive_Backtracker()
             a(m)
 
     if args.mask:
-        m = Rectangular_Maze.masked(args.mask)
+        m = RectangularMaze.masked(args.mask)
         a = Recursive_Backtracker()
         a(m)
 
@@ -159,7 +164,7 @@ if __name__ == '__main__':
        m.to_file(args.to_file)
 
     if args.from_file:
-        m = Rectangular_Maze.from_file(args.from_file)
+        m = RectangularMaze.from_file(args.from_file)
         m.make_graph()
         l = list(m.grid_graph.nodes)
         #print(l)
@@ -174,7 +179,7 @@ if __name__ == '__main__':
 
 
     if args.svg_file and not args.path:
-        p = Rectangular_Maze_Printer(filename=args.svg_file)
+        p = RectangularMazePrinter(filename=args.svg_file)
         p.print(m)
         p.save()
 

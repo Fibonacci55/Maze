@@ -1,22 +1,22 @@
 
 from abc import ABC, abstractmethod
 import svgwrite as draw
-from maze import Neighbour
+from rectangularmaze import Neighbour, Maze
 import networkx as nx
 
 
-class Maze_Printer(ABC):
+class MazePrinter(ABC):
 
     @abstractmethod
     def __init__(self):
         pass
 
     @abstractmethod
-    def print(self, maze):
+    def print(self, maze: Maze):
         pass
 
 
-class Rectangular_Maze_Printer:
+class RectangularMazePrinter:
 
     def __init__(self, cell_size = 10, filename="maze.svg"):
         self.cell_size = cell_size
