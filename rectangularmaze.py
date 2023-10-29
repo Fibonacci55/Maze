@@ -67,7 +67,6 @@ class MazeElement:
 
 class RectangularMaze(Maze):
 
-
     def __init__(self, width: int, height: int):
         self.grid = [[MazeElement(r, c) for c in range(0, width)] for r in range(0, height)]
         self.grid_graph = nx.DiGraph()
