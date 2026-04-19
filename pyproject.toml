@@ -7,6 +7,8 @@ requires-python = ">=3.14"
 dependencies = [
     "icecream>=2.2.0",
     "loguru>=0.7.3",
+    "networkx>=3.6.1",
+    "wand>=0.7.0",
 ]
 
 [build-system]
@@ -25,6 +27,7 @@ testpaths = ["tests"]
 
 [dependency-groups]
 dev = [
+    "icecream>=2.2.0",
     "pytest>=9.0.3",
     "ruff>=0.15.11",
 ]

@@ -4,17 +4,16 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 
-from rectangularmaze import RectangularMaze
+from rectangular_maze import RectangularMaze
 from maze_gen_algorithms import Recursive_Backtracker
 from mazeprinter import RectangularMazePrinter
 import argparse
 import networkx as nx
 
 
+def get_edge_points(of_list):
 
-def get_edge_points (of_list):
-
-    #of_list.sort()
+    # of_list.sort()
 
     l_min = [of_list[0]]
     r_max = [of_list[0]]
@@ -22,9 +21,9 @@ def get_edge_points (of_list):
     t_min = [of_list[0]]
     b_max = [of_list[0]]
 
-    #print (len(of_list))
+    # print (len(of_list))
     for p in of_list:
-        #print(p)
+        # print(p)
         if p[1] == l_min[0][1]:
             l_min.append(p)
         if p[1] < l_min[0][1]:
@@ -44,98 +43,115 @@ def get_edge_points (of_list):
             b_max.append(p)
         if p[0] > b_max[0][0]:
             b_max = [p]
-#
+    #
     return (l_min, t_min, r_max, b_max)
 
-def make_a_path (point_list):
-#    pass
 
-#    l = args.path.split(" ")
-#    pl = []
-#    # print ("P", p)
-#    # print ("int(p[0].split(',')[0])", int(p[0].split(',')[0]))
-#    # print ("int(p[0].split(',')[1])", int(p[0].split(',')[1]))
-#    # print ("p[0].split(',')", p[0].split(','))
-#    # print ('int(p[0].split(',')[0])', int(p[0].split(',')[0]))
-#    p = l[0]
-#    print ('p', p)
-#    s = tuple((int(p.split(',')[0]), int(p.split(',')[1])))
-#    print ("==========")
-#    for p in l[1:]:
-#        e = tuple((int(p.split(',')[0]), int(p.split(',')[1])))
-#        print(s, e)
-#        rl = nx.dijkstra_path(m.grid_graph, s, e)
-#       print ('\t', rl)
-#        #pl += nx.dijkstra_path(m.grid_graph, s, e)
-#        pl += rl
-#        s = e
+def make_a_path(point_list):
+    #    pass
 
-    #print(pl)
+    #    l = args.path.split(" ")
+    #    pl = []
+    #    # print ("P", p)
+    #    # print ("int(p[0].split(',')[0])", int(p[0].split(',')[0]))
+    #    # print ("int(p[0].split(',')[1])", int(p[0].split(',')[1]))
+    #    # print ("p[0].split(',')", p[0].split(','))
+    #    # print ('int(p[0].split(',')[0])', int(p[0].split(',')[0]))
+    #    p = l[0]
+    #    print ('p', p)
+    #    s = tuple((int(p.split(',')[0]), int(p.split(',')[1])))
+    #    print ("==========")
+    #    for p in l[1:]:
+    #        e = tuple((int(p.split(',')[0]), int(p.split(',')[1])))
+    #        print(s, e)
+    #        rl = nx.dijkstra_path(m.grid_graph, s, e)
+    #       print ('\t', rl)
+    #        #pl += nx.dijkstra_path(m.grid_graph, s, e)
+    #        pl += rl
+    #        s = e
+
+    # print(pl)
     p = RectangularMazePrinter(cell_size=20, filename=args.svg_file)
     pl = nx.dag_longest_path(m.grid_graph)
-    print (pl)
+    print(pl)
     p.print(m)
     p.add_path(pl)
     p.save()
 
 
 def create_arg_parser():
-    parser = argparse.ArgumentParser(
-                    prog = 'Maze',
-                    description = 'Creates mazes',
-                    epilog = ' ')
+    parser = argparse.ArgumentParser(prog="Maze", description="Creates mazes", epilog=" ")
 
-    parser.add_argument('-n', '--new', action="store_true", help='Create a new maze')
-    parser.add_argument('-d', '--dimension', type=str,
-                        dest="dimension", default='',
-                        help='Dimension of the new mask' )
+    parser.add_argument("-n", "--new", action="store_true", help="Create a new maze")
+    parser.add_argument(
+        "-d",
+        "--dimension",
+        type=str,
+        dest="dimension",
+        default="",
+        help="Dimension of the new mask",
+    )
 
-    parser.add_argument('-m', '--apply_mask', type=str,
-                        dest="mask", default='',
-                        help='Apply the mask on the maze' )
-    parser.add_argument('-s', '--save_to', type=str,
-                        dest="to_file", default='',
-                        help='Save a newly created maze to file')
-    parser.add_argument('-r', '--reload_from', type=str,
-                        dest="from_file", default='',
-                        help='Reload a created maze from file')
-    parser.add_argument('-p', '--print_to', type=str,
-                        dest="svg_file", default='',
-                        help='Create a SVG file')
+    parser.add_argument(
+        "-m", "--apply_mask", type=str, dest="mask", default="", help="Apply the mask on the maze"
+    )
+    parser.add_argument(
+        "-s",
+        "--save_to",
+        type=str,
+        dest="to_file",
+        default="",
+        help="Save a newly created maze to file",
+    )
+    parser.add_argument(
+        "-r",
+        "--reload_from",
+        type=str,
+        dest="from_file",
+        default="",
+        help="Reload a created maze from file",
+    )
+    parser.add_argument(
+        "-p", "--print_to", type=str, dest="svg_file", default="", help="Create a SVG file"
+    )
 
-    parser.add_argument('-i', '--info', action="store_true", help='Info on a maze')
+    parser.add_argument("-i", "--info", action="store_true", help="Info on a maze")
 
-    parser.add_argument('-a', '--add', type=str,
-                        dest="path", default='',
-                        help='Add a path from two points to a maze. Given by "n,n n,n"')
+    parser.add_argument(
+        "-a",
+        "--add",
+        type=str,
+        dest="path",
+        default="",
+        help='Add a path from two points to a maze. Given by "n,n n,n"',
+    )
     return parser
 
-if __name__ == '__main__':
 
-    #mask = "D:\\Projects\\Flavio\\fla_quadrat_low.png"
-    #mask = "D:\\Projects\\Flavio\\fla_quadrat.png"
-    #m = RectangularMaze(300,300)
-    #m = RectangularMaze.masked(mask)
-    #m = RectangularMaze(2,2)
-    #a = Recursive_Backtracker()
-    #a(m)
-    #m.to_file('maze_1.txt')
+if __name__ == "__main__":
+    # mask = "D:\\Projects\\Flavio\\fla_quadrat_low.png"
+    # mask = "D:\\Projects\\Flavio\\fla_quadrat.png"
+    # m = RectangularMaze(300,300)
+    # m = RectangularMaze.masked(mask)
+    # m = RectangularMaze(2,2)
+    # a = Recursive_Backtracker()
+    # a(m)
+    # m.to_file('maze_1.txt')
 
-    #m = RectangularMaze.from_file('saved_maze.txt')
-    #p = RectangularMazePrinter()
-    #p.print(m, path_way=[(10, 12), (129, 100)])
+    # m = RectangularMaze.from_file('saved_maze.txt')
+    # p = RectangularMazePrinter()
+    # p.print(m, path_way=[(10, 12), (129, 100)])
 
+    # import networkx as nx
 
-    #import networkx as nx
+    # print (r)
 
-    #print (r)
+    # print (l)
+    # p = nx.dijkstra_path(m.grid_graph, (10, 12), (129, 0))
+    # print (p)
 
-    #print (l)
-    #p = nx.dijkstra_path(m.grid_graph, (10, 12), (129, 0))
-    #print (p)
-
-    #-m "D:\\Projects\\Flavio\\fla_quadrat.png" -p "maze.svg" -s "save_maze.txt"
-    #-r "save_maze.txt"
+    # -m "D:\\Projects\\Flavio\\fla_quadrat.png" -p "maze.svg" -s "save_maze.txt"
+    # -r "save_maze.txt"
     """-m
     "D:\\Projects\\Flavio\\fla_quadrat_35.png" -s
     fla_quadrat_35.sav -p
@@ -149,9 +165,9 @@ if __name__ == '__main__':
 
     if args.new:
         if args.dimension:
-            w=int(args.dimension.split(',')[0])
-            h=int(args.dimension.split(',')[1])
-            m = RectangularMaze(w,h)
+            w = int(args.dimension.split(",")[0])
+            h = int(args.dimension.split(",")[1])
+            m = RectangularMaze(w, h)
             a = Recursive_Backtracker()
             a(m)
 
@@ -161,28 +177,27 @@ if __name__ == '__main__':
         a(m)
 
     if args.to_file:
-       m.to_file(args.to_file)
+        m.to_file(args.to_file)
 
     if args.from_file:
         m = RectangularMaze.from_file(args.from_file)
         m.make_graph()
         l = list(m.grid_graph.nodes)
-        #print(l)
+        # print(l)
         if args.info:
             r = get_edge_points(l)
-            print (r[0])
-            print (r[1])
-            print (r[2])
-            print (r[3])
+            print(r[0])
+            print(r[1])
+            print(r[2])
+            print(r[3])
         if args.path:
             make_a_path(args.path)
-
 
     if args.svg_file and not args.path:
         p = RectangularMazePrinter(filename=args.svg_file)
         p.print(m)
         p.save()
 
-#-r "save_maze.txt" -a "32,12 130,99" -p "maze_1.svg"
-#-n -d 10,10 -s square.sav -p square.svg
-#-r square.sav -a "0,0 9,9" -p square_p.svg
+# -r "save_maze.txt" -a "32,12 130,99" -p "maze_1.svg"
+# -n -d 10,10 -s square.sav -p square.svg
+# -r square.sav -a "0,0 9,9" -p square_p.svg

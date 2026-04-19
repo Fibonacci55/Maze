@@ -4,21 +4,20 @@ import wand.image as image
 from wand import color
 import random as rnd
 import networkx as nx
-import json
 import pickle
 from enum import IntEnum
 
-T = TypeVar('T', bound='MazeElement')
+T = TypeVar("T", bound="MazeElement")
 
 
 class Neighbour(IntEnum):
-    """
+    """ """
 
-    """
     North = 0
     East = 1
     South = 2
     West = 3
+
 
 class MazeElement:
     def __init__(self, row: int, col: int) -> None:
@@ -30,7 +29,7 @@ class MazeElement:
         self.active = True
 
     def __repr__(self):
-        return '{} / {}'.format(self.row, self.col)
+        return "{} / {}".format(self.row, self.col)
 
     def __lt__(self, other: Type[T]) -> bool:
         if self.row < other.row:
@@ -66,20 +65,19 @@ class MazeElement:
 
 
 class RectangularMaze(Maze):
-
     def __init__(self, width: int, height: int):
         self.grid = [[MazeElement(r, c) for c in range(0, width)] for r in range(0, height)]
         self.grid_graph = nx.DiGraph()
         self.width = width
         self.height = height
 
-        #for row in self.grid:
+        # for row in self.grid:
         #    self.grid_graph.add_nodes_from (row)
 
     @classmethod
     def masked(cls, mask_file: str) -> Maze:
 
-        white = color.Color('#fff')
+        white = color.Color("#fff")
         whites = 0
         with image.Image(filename=mask_file) as img:
             m = cls(img.width, img.height)
@@ -88,11 +86,12 @@ class RectangularMaze(Maze):
                     if img[i][j] == white:
                         m.grid[i][j].active = False
                         whites += 1
-            print ('Whites', whites)
+            print("Whites", whites)
             return m
+
     def random_cell(self):
-        i = rnd.randint(0, self.height-1)
-        j = rnd.randint(0, self.width-1)
+        i = rnd.randint(0, self.height - 1)
+        j = rnd.randint(0, self.width - 1)
 
         return self.grid[i][j]
 
@@ -101,30 +100,29 @@ class RectangularMaze(Maze):
         i = of_cell.row
         j = of_cell.col
 
-        #print ('i {}, i+1 {}, j {}, j+1 {}'.format(i, i+1, j, j+1))
+        # print ('i {}, i+1 {}, j {}, j+1 {}'.format(i, i+1, j, j+1))
         if i > 0:
-            if self.grid[i-1][j].active:
-                neighbour_list.append(self.grid[i-1][j])
+            if self.grid[i - 1][j].active:
+                neighbour_list.append(self.grid[i - 1][j])
         if i + 1 < self.height:
-            if self.grid[i+1][j].active:
-                neighbour_list.append(self.grid[i+1][j])
+            if self.grid[i + 1][j].active:
+                neighbour_list.append(self.grid[i + 1][j])
         if j > 0:
-            if self.grid[i][j-1].active:
-                neighbour_list.append(self.grid[i][j-1])
+            if self.grid[i][j - 1].active:
+                neighbour_list.append(self.grid[i][j - 1])
         if j + 1 < self.width:
-            if self.grid[i][j+1].active:
-                neighbour_list.append(self.grid[i][j+1])
+            if self.grid[i][j + 1].active:
+                neighbour_list.append(self.grid[i][j + 1])
 
         if only_unvisited:
             neighbour_list = [e for e in neighbour_list if e.visited == False]
 
-        #print ("Neighbours of ", of_cell)
+        # print ("Neighbours of ", of_cell)
         for e in neighbour_list:
             pass
-            #print (e)
+            # print (e)
 
         return neighbour_list
-
 
     def make_graph(self):
 
@@ -132,16 +130,16 @@ class RectangularMaze(Maze):
             for j in range(0, self.width):
                 if not self.grid[i][j].active:
                     continue
-                if self.grid[i][j].neighbours[Neighbour.South] :
-                   self.grid_graph.add_edge((i, j), (i+1, j))
-                if self.grid[i][j].neighbours[Neighbour.East] :
-                    self.grid_graph.add_edge((i, j), (i, j+1))
+                if self.grid[i][j].neighbours[Neighbour.South]:
+                    self.grid_graph.add_edge((i, j), (i + 1, j))
+                if self.grid[i][j].neighbours[Neighbour.East]:
+                    self.grid_graph.add_edge((i, j), (i, j + 1))
 
     @classmethod
     def from_file(cls, filename):
-        with open(filename, 'rb') as inf:
-            return pickle.load (inf)
+        with open(filename, "rb") as inf:
+            return pickle.load(inf)
 
     def to_file(self, filenname):
-        with open(filenname, 'wb') as outf:
+        with open(filenname, "wb") as outf:
             pickle.dump(self, outf)
